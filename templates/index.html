@@ -1,0 +1,49 @@
+<!doctype html>
+<head>
+  <script src="https://www.gstatic.com/firebasejs/3.6.6/firebase.js"></script>
+</head>
+<title>Hello from Flask</title>
+<body>
+  <h1>Hello, World!</h1>
+  <p>
+    Here are the names in my database:
+    <br/>
+    <span id="names"></span>
+  </p>
+  <h2>Add Name</h2>
+  <input type="text" id="newName"><br>
+  <button onclick="add(document.getElementById('newName').value)">Submit</button>
+</body>
+<script>
+var config = {
+  apiKey: "AIzaSyDfs410txr2QmZ-HgsYk2XNyDv9gYVS3lk",
+  authDomain: "test-flask-71644.firebaseapp.com",
+  databaseURL: "https://test-flask-71644.firebaseio.com",
+  storageBucket: "test-flask-71644.appspot.com",
+  messagingSenderId: "818210399565"
+};
+firebase.initializeApp(config);
+
+var database = firebase.database();
+
+function myFunction() {
+  var names = database.ref('/names').once('value').then(function(snapshot) { 
+    var names = snapshot.val();
+    console.log(names);
+    for(var key in names) {
+      document.getElementById("names").innerHTML += names[key] + "<br/>";
+    }
+  });  
+}
+
+function add(name) {
+  var newName = database.ref('/names').push();
+  newName.set(name);
+  document.getElementById("newName").value = "";
+}
+  
+database.ref('/names').on('child_added', function(data) {
+  document.getElementById("names").innerHTML += data.val() + "<br/>";
+});
+
+</script>
